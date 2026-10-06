@@ -1,0 +1,1539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bee Happy Hive</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400..800&family=Great+Vibes&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Comic Sans MS', 'Arial Rounded MT Bold', sans-serif;
+            background: linear-gradient(180deg, #87CEEB 0%, #E0F6FF 50%, #98D8C8 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 10px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: float 20s linear infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+
+        .game-wrapper {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 480px;
+        }
+
+        @media (min-width: 768px) {
+            .game-wrapper {
+                max-width: 600px;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .game-wrapper {
+                max-width: 700px;
+            }
+        }
+
+        .game-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 30px;
+            padding: 0;
+            box-shadow: 
+                0 30px 60px rgba(0,0,0,0.3),
+                0 0 0 8px rgba(255,255,255,0.5),
+                inset 0 0 40px rgba(255,215,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(180deg, #FF8C42 0%, #FFAA1D 50%, #FFD93D 100%);
+            padding: 15px;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 5px 20px rgba(255,140,66,0.4);
+        }
+
+        @media (min-width: 768px) {
+            .header {
+                padding: 25px;
+            }
+        }
+
+        .title {
+            font-size: 24px;
+            font-weight: bold;
+            color: white;
+            text-shadow: 
+                3px 3px 0px #D97706,
+                4px 4px 10px rgba(0,0,0,0.3);
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+            animation: titleBounce 2s ease-in-out infinite;
+        }
+
+        @media (min-width: 768px) {
+            .title {
+                font-size: 36px;
+                margin-bottom: 18px;
+            }
+        }
+
+        @keyframes titleBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        .stats-bar {
+            display: flex;
+            justify-content: space-around;
+            gap: 8px;
+        }
+
+        .stat-badge {
+            background: white;
+            border-radius: 20px;
+            padding: 6px 12px;
+            box-shadow: 
+                0 4px 0 rgba(0,0,0,0.1),
+                inset 0 2px 5px rgba(255,215,0,0.3);
+            min-width: 70px;
+            transition: transform 0.1s;
+        }
+
+        @media (min-width: 768px) {
+            .stat-badge {
+                padding: 10px 18px;
+                min-width: 95px;
+            }
+        }
+
+        .stat-icon {
+            font-size: 18px;
+            display: block;
+        }
+
+        @media (min-width: 768px) {
+            .stat-icon {
+                font-size: 24px;
+            }
+        }
+
+        .stat-label {
+            font-size: 9px;
+            color: #8B4513;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-top: 2px;
+        }
+
+        @media (min-width: 768px) {
+            .stat-label {
+                font-size: 11px;
+            }
+        }
+
+        .stat-value {
+            font-size: 16px;
+            font-weight: bold;
+            color: #FF8C42;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        @media (min-width: 768px) {
+            .stat-value {
+                font-size: 22px;
+            }
+        }
+
+        .content-area {
+            padding: 12px;
+        }
+
+        @media (min-width: 768px) {
+            .content-area {
+                padding: 20px;
+            }
+        }
+
+        .objective-container {
+            background: linear-gradient(135deg, #FFEAA7 0%, #FDCB6E 100%);
+            border-radius: 20px;
+            padding: 12px;
+            margin-bottom: 12px;
+            box-shadow: 
+                0 8px 0 #DAA520,
+                0 12px 20px rgba(0,0,0,0.2);
+        }
+
+        .objective-title {
+            text-align: center;
+            font-weight: bold;
+            color: #8B4513;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        @media (min-width: 768px) {
+            .objective-title {
+                font-size: 18px;
+            }
+        }
+
+        .bee-container {
+            position: relative;
+            height: 120px;
+            background: linear-gradient(180deg, #87CEEB 0%, #B4D7E8 100%);
+            border-radius: 15px;
+            overflow: hidden;
+            border: 3px solid #4A90A4;
+            box-shadow: inset 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        @media (min-width: 768px) {
+            .bee-container {
+                height: 180px;
+            }
+        }
+
+        .bee {
+            position: absolute;
+            font-size: 16px;
+            filter: drop-shadow(0 2px 3px rgba(0,0,0,0.3));
+            animation: beeFloat 3s ease-in-out infinite;
+        }
+
+        @media (min-width: 768px) {
+            .bee {
+                font-size: 22px;
+            }
+        }
+
+        @keyframes beeFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+        }
+
+        .bee.removing {
+            animation: beeFlyAway 0.15s cubic-bezier(0.4, 0.0, 0.2, 1) forwards;
+        }
+
+        @keyframes beeFlyAway {
+            0% {
+                transform: scale(1) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(0) rotate(360deg) translateY(-50px);
+                opacity: 0;
+            }
+        }
+
+        .honey-pot {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            text-align: center;
+            opacity: 0;
+            transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            z-index: 10;
+        }
+
+        .honey-pot.visible {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .honey-pot-emoji {
+            font-size: 50px;
+            display: block;
+            filter: drop-shadow(0 8px 15px rgba(0,0,0,0.3));
+            animation: honeyBounce 1s ease-in-out infinite;
+        }
+
+        @media (min-width: 768px) {
+            .honey-pot-emoji {
+                font-size: 80px;
+            }
+        }
+
+        @keyframes honeyBounce {
+            0%, 100% { transform: translateY(0) rotate(-5deg); }
+            50% { transform: translateY(-10px) rotate(5deg); }
+        }
+
+        .honey-pot-text {
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            color: white;
+            font-weight: bold;
+            padding: 6px 12px;
+            border-radius: 25px;
+            margin-top: 6px;
+            font-size: 10px;
+            border: 2px solid white;
+            box-shadow: 
+                0 4px 0 #DAA520,
+                0 8px 15px rgba(0,0,0,0.3);
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        @media (min-width: 768px) {
+            .honey-pot-text {
+                padding: 10px 18px;
+                font-size: 13px;
+            }
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 25px;
+            background: rgba(139,69,19,0.3);
+            border-radius: 20px;
+            overflow: hidden;
+            border: 2px solid #8B4513;
+            position: relative;
+            margin-top: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #FFD700 0%, #FFA500 50%, #FFD700 100%);
+            background-size: 200% 100%;
+            animation: shimmer 2s linear infinite;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.4);
+            transition: width 0.3s;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: 0% 0%; }
+            100% { background-position: 200% 0%; }
+        }
+
+        .grid-container {
+            background: linear-gradient(135deg, #6A4C93 0%, #8B7AB8 100%);
+            border-radius: 20px;
+            padding: 12px;
+            box-shadow: 
+                0 10px 0 #4A3570,
+                0 15px 30px rgba(0,0,0,0.3);
+            margin-top: 12px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 6px;
+            background: rgba(0,0,0,0.2);
+            padding: 6px;
+            border-radius: 15px;
+        }
+
+        @media (min-width: 768px) {
+            .grid {
+                gap: 10px;
+                padding: 10px;
+            }
+        }
+
+        .cell {
+            aspect-ratio: 1;
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            background: linear-gradient(135deg, 
+                rgba(255,255,255,0.9) 0%, 
+                rgba(255,255,255,0.7) 100%);
+            transition: all 0.1s;
+            user-select: none;
+            position: relative;
+            box-shadow: 
+                0 3px 0 rgba(0,0,0,0.2),
+                inset 0 2px 5px rgba(255,255,255,0.5);
+            border: 2px solid rgba(255,255,255,0.8);
+        }
+
+        @media (min-width: 768px) {
+            .cell {
+                font-size: 42px;
+            }
+        }
+
+        .cell:hover {
+            transform: scale(1.1);
+            z-index: 10;
+        }
+
+        .cell.selected {
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            transform: scale(1.15);
+            animation: selectedPulse 0.6s infinite;
+            z-index: 15;
+        }
+
+        @keyframes selectedPulse {
+            0%, 100% { transform: scale(1.15); }
+            50% { transform: scale(1.2); }
+        }
+
+        .cell.matching {
+            animation: matchPop 0.1s forwards;
+            z-index: 20;
+        }
+
+        @keyframes matchPop {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.3); opacity: 1; }
+            100% { transform: scale(0); opacity: 0; }
+        }
+
+        /* Power-up styles */
+        .cell.striped-h::before {
+            content: '';
+            position: absolute;
+            width: 80%;
+            height: 3px;
+            background: white;
+            box-shadow: 0 0 5px rgba(255,255,255,0.8);
+        }
+
+        .cell.striped-v::before {
+            content: '';
+            position: absolute;
+            width: 3px;
+            height: 80%;
+            background: white;
+            box-shadow: 0 0 5px rgba(255,255,255,0.8);
+        }
+
+        .cell.wrapped::after {
+            content: '🎁';
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            font-size: 16px;
+        }
+
+        .cell.colorbomb {
+            background: radial-gradient(circle, #FF69B4, #8A2BE2);
+            animation: bombGlow 1s infinite;
+        }
+
+        @keyframes bombGlow {
+            0%, 100% { box-shadow: 0 0 10px rgba(255,105,180,0.5); }
+            50% { box-shadow: 0 0 20px rgba(255,105,180,1); }
+        }
+
+        .cell.bee-power::after {
+            content: '🐝';
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            font-size: 18px;
+        }
+
+        .message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            padding: 20px 30px;
+            border-radius: 25px;
+            font-weight: bold;
+            font-size: 18px;
+            z-index: 1000;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+            border: 3px solid white;
+            text-align: center;
+            max-width: 90vw;
+        }
+
+        @media (min-width: 768px) {
+            .message {
+                padding: 30px 50px;
+                font-size: 26px;
+            }
+        }
+
+        .message.show {
+            animation: messagePopIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+        }
+
+        @keyframes messagePopIn {
+            0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+            100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        }
+
+        .message.success {
+            background: linear-gradient(135deg, #00D2FF 0%, #3A47D5 100%);
+            color: white;
+        }
+
+        .message.info {
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            color: white;
+        }
+
+        .message.powerup {
+            background: linear-gradient(135deg, #FF6B9D 0%, #C06C84 100%);
+            color: white;
+        }
+
+        .controls {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            flex: 1;
+            min-width: 80px;
+            padding: 10px;
+            border: none;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.1s;
+            box-shadow: 0 5px 0 rgba(0,0,0,0.2);
+            text-transform: uppercase;
+        }
+
+        @media (min-width: 768px) {
+            .btn {
+                padding: 14px;
+                font-size: 14px;
+            }
+        }
+
+        .btn:active {
+            transform: translateY(3px);
+            box-shadow: 0 2px 0 rgba(0,0,0,0.2);
+        }
+
+        .btn-primary { background: linear-gradient(135deg, #FF6B6B, #C44569); color: white; }
+        .btn-secondary { background: linear-gradient(135deg, #48C9B0, #1BBC9B); color: white; }
+        .btn-music { background: linear-gradient(135deg, #9B59B6, #8E44AD); color: white; }
+        .btn-track { background: linear-gradient(135deg, #E74C3C, #C0392B); color: white; }
+
+        .confetti {
+            position: fixed;
+            font-size: 25px;
+            pointer-events: none;
+            z-index: 1001;
+            animation: confettiFall 3s ease-out forwards;
+        }
+
+        @keyframes confettiFall {
+            from { transform: translateY(-100px) rotate(0deg); opacity: 1; }
+            to { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+
+        .celebration-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1000;
+            display: none;
+        }
+
+        .celebration-overlay.active {
+            display: block;
+        }
+        .free-tray { margin-top: 12px; padding: 10px; border-radius: 16px; text-align: center; font-weight: bold; font-size: 13px; color: #8B4513; background: #fff3c4; border: 2px dashed #DAA520; touch-action: none; user-select: none; opacity: 0.6; }
+        .free-tray.has { opacity: 1; cursor: grab; background: linear-gradient(135deg, #FFD700, #FFA500); animation: bombGlow 1s infinite; }
+        .free-tray.armed { outline: 3px solid #FF6B9D; }
+
+        /* ---- Elegant golden theme ---- */
+        :root { --ink: #4A2C06; --gold-d: #A8740A; }
+        body { font-family: 'Bodoni Moda', 'Didot', 'Bodoni 72', 'Playfair Display', Georgia, serif; font-weight: 600; color: var(--ink);
+            background: radial-gradient(ellipse at top, #FFF6CF 0%, #F8DC7C 55%, #E7B93C 100%); }
+        body::before { animation: none; background: radial-gradient(circle, rgba(255,255,255,0.35) 1px, transparent 1.5px); background-size: 46px 46px; }
+        .game-container { background: linear-gradient(180deg, #FFFDF2, #FFF4CC);
+            box-shadow: 0 24px 60px rgba(120,80,0,0.35), 0 0 0 3px #E8C14F, 0 0 0 9px rgba(255,255,255,0.55); }
+        .header { background: linear-gradient(180deg, #F8D86A 0%, #F2C94C 55%, #E6B52E 100%);
+            box-shadow: 0 4px 18px rgba(168,116,10,0.35), inset 0 -2px 0 rgba(255,255,255,0.4); }
+        .title { font-family: 'Great Vibes', 'Dancing Script', cursive; font-weight: 400; font-size: 42px; letter-spacing: 0; animation: none;
+            color: var(--ink); text-shadow: 0 1px 0 rgba(255,255,255,0.7), 0 3px 10px rgba(120,80,0,0.25); }
+        .stat-badge { background: linear-gradient(180deg, #FFFDF2, #FFF1C2); border: 1.5px solid #E2B73A;
+            box-shadow: 0 3px 8px rgba(120,80,0,0.2), inset 0 1px 0 #fff; }
+        .stat-label { font-size: 14px; text-transform: none; color: var(--gold-d); letter-spacing: 0.3px; }
+        .stat-value { font-size: 24px; color: var(--ink); text-shadow: none; }
+        .objective-container { background: linear-gradient(135deg, #FFF3C4, #F8DC7C); box-shadow: 0 5px 0 #C9951A, 0 10px 18px rgba(120,80,0,0.2); }
+        .objective-title { color: var(--ink); font-size: 22px; }
+        .bee-container { background: linear-gradient(180deg, #FFFBE6, #FCE9A0); border: 3px solid #D9A21B; }
+        .bee { filter: none; will-change: transform; }
+        .bee.removing { animation: beeFlyAway 0.25s ease-in forwards; }
+        .honey-pot-text { color: var(--ink); text-shadow: none; font-size: 15px; }
+        .progress-bar { border-color: var(--gold-d); background: rgba(168,116,10,0.18); }
+        .progress-fill { background: linear-gradient(90deg, #F8D86A, #E2A91C, #F8D86A); background-size: 200% 100%; color: var(--ink); text-shadow: 0 1px 0 rgba(255,255,255,0.5); font-size: 16px; }
+        .free-tray { background: #FFF6D6; border: 2px dashed #D9A21B; color: var(--ink); font-size: 17px; }
+        .free-tray.has { background: linear-gradient(135deg, #FBE48C, #E2A91C); }
+        .free-tray.armed { outline-color: var(--ink); }
+        .grid-container { background: linear-gradient(135deg, #7A4E0E, #4A2C06); box-shadow: 0 8px 0 #2E1B03, 0 14px 26px rgba(60,35,0,0.4); }
+        .grid { background: rgba(0,0,0,0.25); overflow: hidden; }
+        .cell { background: linear-gradient(145deg, #FFFDF2, #FDEBA8); border: 1.5px solid #F0CE62;
+            box-shadow: 0 3px 0 rgba(90,58,10,0.35), inset 0 1px 3px #fff; }
+        .cell.selected { background: linear-gradient(135deg, #FFE27A, #E8B82E); box-shadow: 0 0 0 3px #fff, 0 0 18px rgba(255,214,90,0.9); }
+        .cell.colorbomb { background: radial-gradient(circle, #FFF6CF, #F2C94C 55%, #A8740A); }
+        .cell.matching { animation: matchPop 0.14s ease-out forwards; }
+        .cell.drop { animation: cellDrop 0.3s cubic-bezier(0.3, 1.3, 0.5, 1) both; }
+        @keyframes cellDrop { from { transform: translateY(calc(var(--drop) * -108%)); } to { transform: none; } }
+        .btn { font-family: inherit; font-size: 17px; text-transform: none; letter-spacing: 0.3px; color: var(--ink); border: 1.5px solid #D9A21B;
+            background: linear-gradient(180deg, #FFF6D6, #F6D77A); box-shadow: 0 4px 0 #B98611, 0 8px 14px rgba(120,80,0,0.2); }
+        .btn:active { box-shadow: 0 1px 0 #B98611; }
+        .btn-primary { background: linear-gradient(180deg, #F8D86A, #E0A81C); }
+        .btn-track { background: linear-gradient(180deg, #F2C94C, #D49A14); }
+        .btn-music { background: linear-gradient(180deg, #6B430A, #4A2C06); color: #FFE9A3; border-color: #2E1B03; box-shadow: 0 4px 0 #2E1B03, 0 8px 14px rgba(60,35,0,0.3); }
+        .message { font-size: 26px; border: 3px solid #fff; }
+        .message.success { background: linear-gradient(135deg, #6B430A, #3A2204); color: #FFE9A3; border-color: #F2C94C; }
+        .message.info { background: linear-gradient(135deg, #FBE48C, #E2A91C); color: var(--ink); text-shadow: none; }
+        .message.powerup { background: linear-gradient(135deg, #F8D86A, #C98A0B); color: var(--ink); text-shadow: none; }
+        @media (min-width: 768px) { .title { font-size: 60px; } .btn { font-size: 20px; } .message { font-size: 32px; } .stat-value { font-size: 28px; } }
+        /* ---- Editorial serif sizing (title keeps its cursive) ---- */
+        .stat-label { font-size: 12px; letter-spacing: 0.6px; }
+        .stat-value { font-size: 22px; }
+        .objective-title { font-size: 18px; }
+        .progress-fill { font-size: 14px; }
+        .free-tray { font-size: 14px; }
+        .btn { font-size: 14px; letter-spacing: 0.4px; }
+        .message { font-size: 22px; }
+        @media (min-width: 768px) { .btn { font-size: 16px; } .message { font-size: 28px; } .stat-value { font-size: 26px; } }
+        /* ---- Start screen: play button at the exact centre ---- */
+        .start { position: fixed; inset: 0; z-index: 2000; height: 100vh; height: 100dvh; overflow: auto;
+            display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: 1fr auto 1fr; justify-items: center; overflow-x: hidden; gap: clamp(14px, 3vh, 28px);
+            padding: max(16px, env(safe-area-inset-top)) 16px max(16px, env(safe-area-inset-bottom));
+            background: radial-gradient(ellipse at center, #FFF6CF 0%, #F6D56A 60%, #D9A21B 100%); color: var(--ink); }
+        .start-top { align-self: end; width: min(440px, 100%); text-align: center; }
+        .start-title { font-family: 'Great Vibes', cursive; font-weight: 400; font-size: clamp(30px, 8vw, 58px); line-height: 1.1;
+            text-shadow: 0 1px 0 rgba(255,255,255,0.7); margin-bottom: 8px; }
+        .start-h { font-size: 18px; font-weight: 700; }
+        .start-list { list-style: none; margin-top: 12px; padding: 12px 16px; display: grid; gap: 8px; text-align: left; font-size: 14px;
+            background: rgba(255,253,242,0.85); border: 1.5px solid #E2B73A; border-radius: 18px; }
+        .start-list li { display: flex; gap: 10px; align-items: baseline; }
+        .play-btn { font-family: inherit; font-size: clamp(20px, 5vw, 26px); font-weight: 700; letter-spacing: 0.06em; color: var(--ink);
+            padding: 16px 56px; border-radius: 999px; border: 2px solid var(--gold-d); cursor: pointer;
+            background: linear-gradient(180deg, #FFF1B8, #F2C94C 55%, #D9A21B);
+            box-shadow: 0 6px 0 var(--gold-d), 0 14px 28px rgba(120,80,0,0.35), inset 0 1px 0 #fff;
+            animation: playPulse 2.6s ease-in-out infinite; }
+        @keyframes playPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.07); } }
+        .play-btn:active { animation: none; transform: translateY(4px) scale(0.98); box-shadow: 0 2px 0 var(--gold-d); }
+        .start-bottom { align-self: start; width: min(440px, 100%); text-align: center; font-size: 14px; line-height: 1.45;
+            padding: 12px 16px; border-radius: 16px; background: #4A2C06; color: #FFE9A3; }
+        @media (prefers-reduced-motion: reduce) { .play-btn { animation: none; } }
+        /* Keep the decorative dots inside the screen (a 200%-wide layer made phones widen the page) */
+        html { overflow-x: hidden; }
+        .title { white-space: nowrap; font-size: clamp(28px, 9vw, 42px); }
+        @media (min-width: 768px) { .title { font-size: 60px; } }
+        body::before { position: fixed; inset: 0; width: auto; height: auto; pointer-events: none; }
+    </style>
+</head>
+<body>
+    <div class="game-wrapper">
+        <div class="game-container">
+            <div class="header">
+                <div class="title">🐝 Bee Happy Hive 🍯</div>
+                <div class="stats-bar">
+                    <div class="stat-badge">
+                        <span class="stat-icon">🎯</span>
+                        <div class="stat-label">Level</div>
+                        <div class="stat-value" id="level">1</div>
+                    </div>
+                    <div class="stat-badge">
+                        <span class="stat-icon">⚡</span>
+                        <div class="stat-label">Moves</div>
+                        <div class="stat-value" id="moves">25</div>
+                    </div>
+                    <div class="stat-badge">
+                        <span class="stat-icon">⭐</span>
+                        <div class="stat-label">Score</div>
+                        <div class="stat-value" id="score">0</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-area">
+                <div class="objective-container">
+                    <div class="objective-title">🎯 Clear All the Bees!</div>
+                    <div class="bee-container" id="beeContainer">
+                        <div class="honey-pot" id="honeyPot">
+                            <span class="honey-pot-emoji">🍯</span>
+                            <div class="honey-pot-text">Exclusive<br>Ghanaian Pride</div>
+                        </div>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill" style="width: 100%">
+                            🐝 100 Bees
+                        </div>
+                    </div>
+                </div>
+
+                <div class="free-tray" id="freeTray">🍯💥 Free power-up ×<b id="freeCount">0</b> <small>- drag it onto the board</small></div>
+
+                <div class="grid-container">
+                    <div class="grid" id="grid"></div>
+                </div>
+
+                <div class="controls">
+                    <button class="btn btn-secondary" onclick="game.showHint()">
+                        💡 HINT
+                    </button>
+                    <button class="btn btn-music" id="musicBtn" onclick="game.toggleBGM()">
+                        🎵 Music
+                    </button>
+                    <button class="btn btn-track" onclick="game.changeBGMTrack()">
+                        🎼 Track
+                    </button>
+                    <button class="btn btn-primary" onclick="game.reset()">
+                        🔄 Reset
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="message" id="message"></div>
+    <div class="celebration-overlay" id="celebrationOverlay"></div>
+
+    <script>
+        const game = {
+            gridSize: { cols: 5, rows: 7 },
+            types: ['🌻', '🌺', '🌼', '🌷', '🍯'],
+            grid: [],
+            powerupTypes: [], // Track power-up type for each cell
+            selected: null,
+            moves: 25,
+            score: 0,
+            level: 1,
+            beeCount: 100,
+            maxBees: 100,
+            isProcessing: false,
+            audioContext: null,
+            bgmPlaying: false,
+            bgmOscillators: [],
+            currentBGMTrack: 0,
+            unlockedCodes: [], free: 0, armed: false, ended: false, domBees: 0, bgmTimer: null, bgmGain: null,
+
+            bgmTracks: [
+                { name: "Happy Hive", bpm: 120, wave: "sine", m: "C5:1 E5:1 G5:1 E5:1 A5:2 G5:1 E5:1 C5:2" },
+                { name: "Buzzing Beats", bpm: 140, wave: "triangle", m: "G4:0.5 B4:0.5 D5:0.5 B4:0.5 E5:1 D5:0.5 B4:0.5 G4:1 R:1" },
+                { name: "Sweet Melody", bpm: 100, wave: "sine", m: "E5:1 F5:1 G5:1.5 A5:0.5 G5:1 F5:1 E5:2 C5:2" },
+                { name: "Golden Flow", bpm: 110, wave: "triangle", m: "A4:1 C5:1 E5:1 A5:1.5 G5:0.5 E5:1 C5:1 A4:2" },
+                { name: "Honeycomb Dance", bpm: 150, wave: "sine", m: "D5:0.5 E5:0.5 F5:0.5 G5:1 A5:1 G5:0.5 F5:0.5 E5:1 D5:1.5 R:0.5" },
+                { name: "Ghana Pride", bpm: 105, wave: "sine", m: "C5:1.5 D5:0.5 E5:1 G5:1.5 E5:0.5 D5:1 C5:2" },
+                { name: "Retro Hive 8-bit", bpm: 150, wave: "square", m: "C5:0.5 E5:0.5 G5:0.5 C6:0.5 G5:0.5 E5:0.5 C5:1 D5:0.5 F5:0.5 A5:0.5 D6:0.5 A5:0.5 F5:0.5 D5:1" }
+            ],
+
+            init() {
+                this.initAudio();
+                this.showWelcomeNotice();
+            },
+
+            initAudio() {
+                try {
+                    this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                } catch (e) {
+                    console.log('Audio not supported');
+                }
+            },
+
+            playSound(type) {
+                if (!this.audioContext) return;
+                const osc = this.audioContext.createOscillator();
+                const gain = this.audioContext.createGain();
+                osc.connect(gain);
+                gain.connect(this.audioContext.destination);
+                
+                switch(type) {
+                    case 'match':
+                        osc.frequency.value = 800;
+                        gain.gain.setValueAtTime(0.15, this.audioContext.currentTime);
+                        gain.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.1);
+                        osc.start();
+                        osc.stop(this.audioContext.currentTime + 0.1);
+                        break;
+                    case 'powerup':
+                        osc.frequency.value = 1200;
+                        gain.gain.setValueAtTime(0.2, this.audioContext.currentTime);
+                        gain.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.15);
+                        osc.start();
+                        osc.stop(this.audioContext.currentTime + 0.15);
+                        break;
+                    case 'levelup':
+                        osc.frequency.value = 600;
+                        osc.frequency.exponentialRampToValueAtTime(1200, this.audioContext.currentTime + 0.3);
+                        gain.gain.setValueAtTime(0.2, this.audioContext.currentTime);
+                        gain.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.3);
+                        osc.start();
+                        osc.stop(this.audioContext.currentTime + 0.3);
+                        break;
+                }
+            },
+
+            freq(n) {
+                if (n === 'R') return 0;
+                const m = n.match(/^([A-G])(#?)(\d)$/);
+                const semi = {C:0,D:2,E:4,F:5,G:7,A:9,B:11}[m[1]] + (m[2] ? 1 : 0) + (+m[3] + 1) * 12;
+                return 440 * Math.pow(2, (semi - 69) / 12);
+            },
+
+            note(f, t, d, wave, v) {
+                const ac = this.audioContext, o = ac.createOscillator(), g = ac.createGain();
+                o.type = wave; o.frequency.value = f;
+                g.gain.setValueAtTime(0, t);
+                g.gain.linearRampToValueAtTime(v, t + 0.02);
+                g.gain.linearRampToValueAtTime(0, t + d);
+                o.connect(g); g.connect(this.bgmGain);
+                o.start(t); o.stop(t + d + 0.05);
+            },
+
+            startBGM() {
+                if (!this.audioContext || this.bgmPlaying) return;
+                const ac = this.audioContext;
+                ac.resume();
+                this.bgmPlaying = true;
+                const T = this.bgmTracks[this.currentBGMTrack], beat = 60 / T.bpm;
+                this.bgmGain = ac.createGain();
+                this.bgmGain.gain.value = 0.07;
+                this.bgmGain.connect(ac.destination);
+                const notes = T.m.split(' ').map(x => { const [n, d] = x.split(':'); return { f: this.freq(n), d: +d }; });
+                const loop = notes.reduce((a, n) => a + n.d, 0) * beat;
+                let t0 = ac.currentTime + 0.05;
+                const schedule = () => {
+                    if (!this.bgmPlaying) return;
+                    let t = t0, b = 0;
+                    notes.forEach(n => {
+                        if (n.f) {
+                            this.note(n.f, t, n.d * beat * 0.92, T.wave, 1);
+                            if (b % 2 === 0) this.note(n.f / 4, t, n.d * beat * 1.5, 'triangle', 0.8);
+                        }
+                        t += n.d * beat; b += n.d;
+                    });
+                    t0 += loop;
+                    this.bgmTimer = setTimeout(schedule, Math.max(50, (t0 - ac.currentTime - 0.3) * 1000));
+                };
+                schedule();
+                this.updateMusicButton();
+            },
+
+            stopBGM() {
+                this.bgmPlaying = false;
+                clearTimeout(this.bgmTimer);
+                if (this.bgmGain) { this.bgmGain.disconnect(); this.bgmGain = null; }
+            },
+
+            toggleBGM() {
+                if (this.bgmPlaying) {
+                    this.stopBGM();
+                } else {
+                    this.startBGM();
+                }
+                this.updateMusicButton();
+            },
+
+            changeBGMTrack() {
+                this.stopBGM();
+                this.currentBGMTrack = (this.currentBGMTrack + 1) % this.bgmTracks.length;
+                this.startBGM();
+                this.showMessage(`🎵 ${this.bgmTracks[this.currentBGMTrack].name}`, 'info');
+            },
+
+            updateMusicButton() {
+                const btn = document.getElementById('musicBtn');
+                if (!btn) return;
+                const name = this.bgmTracks[this.currentBGMTrack].name;
+                btn.innerHTML = this.bgmPlaying ? `🎵 ${name}` : `🔇 ${name}`;
+                btn.style.opacity = this.bgmPlaying ? '1' : '0.6';
+            },
+
+            showWelcomeNotice() {
+                const o = document.createElement('div');
+                o.className = 'start';
+                o.innerHTML = `
+                    <div class="start-top">
+                        <div class="start-title">🐝 Bee Happy Hive 🍯</div>
+                        <h2 class="start-h">Bee Happy Rewards</h2>
+                        <ul class="start-list">
+                            <li><span>⚡</span><span><b>Every level:</b> 1 free power-up</span></li>
+                            <li><span>🍯</span><span><b>Level 5:</b> 5% discount code</span></li>
+                            <li><span>🎁</span><span><b>Level 10:</b> 10% discount code</span></li>
+                            <li><span>🏆</span><span><b>Level 20:</b> 20% discount code</span></li>
+                            <li><span>🎉</span><span><b>Level 50:</b> a free honey product</span></li>
+                        </ul>
+                    </div>
+                    <button class="play-btn" id="startBtn">Play</button>
+                    <div class="start-bottom">📝 Codes are revealed when you complete each level. Screenshot or write them down to redeem your prize!</div>`;
+                document.body.appendChild(o);
+                const btn = document.getElementById('startBtn');
+                btn.onclick = () => { o.remove(); this.startGame(); };
+                btn.focus();
+            },
+
+            startGame() {
+                this.bindFree();
+                this.createGrid();
+                this.createBees();
+                this.render();
+                this.startBGM();
+            },
+
+            createGrid() {
+                this.grid = [];
+                this.powerupTypes = [];
+                for (let row = 0; row < this.gridSize.rows; row++) {
+                    this.grid[row] = [];
+                    this.powerupTypes[row] = [];
+                    for (let col = 0; col < this.gridSize.cols; col++) {
+                        this.grid[row][col] = this.randomType();
+                        this.powerupTypes[row][col] = null;
+                    }
+                }
+                this.removeInitialMatches();
+            },
+
+            removeInitialMatches() {
+                let hasMatches = true;
+                let attempts = 0;
+                while (hasMatches && attempts < 100) {
+                    hasMatches = false;
+                    attempts++;
+                    for (let row = 0; row < this.gridSize.rows; row++) {
+                        for (let col = 0; col < this.gridSize.cols; col++) {
+                            const matches = this.findMatches(row, col);
+                            if (matches.length >= 3) {
+                                this.grid[row][col] = this.randomType();
+                                hasMatches = true;
+                            }
+                        }
+                    }
+                }
+            },
+
+            randomType() {
+                return this.types[Math.floor(Math.random() * this.types.length)];
+            },
+
+            createBees() {
+                const container = document.getElementById('beeContainer');
+                container.querySelectorAll('.bee').forEach(b => b.remove());
+                
+                this.domBees = Math.min(this.beeCount, 150);
+                for (let i = 0; i < this.domBees; i++) {
+                    const bee = document.createElement('div');
+                    bee.className = 'bee';
+                    bee.textContent = '🐝';
+                    bee.style.left = Math.random() * (container.offsetWidth - 25) + 'px';
+                    bee.style.top = Math.random() * (container.offsetHeight - 25) + 'px';
+                    container.appendChild(bee);
+                }
+                
+                document.getElementById('honeyPot').classList.remove('visible');
+            },
+
+            render() {
+                const gridEl = document.getElementById('grid');
+                gridEl.innerHTML = '';
+                
+                for (let row = 0; row < this.gridSize.rows; row++) {
+                    for (let col = 0; col < this.gridSize.cols; col++) {
+                        const cell = document.createElement('div');
+                        cell.className = 'cell';
+                        cell.textContent = this.grid[row][col];
+                        cell.dataset.row = row;
+                        cell.dataset.col = col;
+                        
+                        // Apply power-up classes
+                        const powerup = this.powerupTypes[row][col];
+                        if (powerup === 'striped-h') cell.classList.add('striped-h');
+                        if (powerup === 'striped-v') cell.classList.add('striped-v');
+                        if (powerup === 'wrapped') cell.classList.add('wrapped');
+                        if (powerup === 'colorbomb') cell.classList.add('colorbomb');
+                        if (powerup === 'bee') cell.classList.add('bee-power');
+                        
+                        const d = this.drops && this.drops[row + ',' + col];
+                        if (d) { cell.style.setProperty('--drop', d); cell.classList.add('drop'); }
+                        cell.onclick = () => this.handleClick(row, col);
+                        gridEl.appendChild(cell);
+                    }
+                }
+                
+                document.getElementById('moves').textContent = this.moves;
+                document.getElementById('score').textContent = this.score;
+                document.getElementById('level').textContent = this.level;
+                this.updateProgress();
+            },
+
+            updateProgress() {
+                const pct = (this.beeCount / this.maxBees) * 100;
+                const fill = document.getElementById('progressFill');
+                fill.style.width = pct + '%';
+                fill.textContent = `🐝 ${this.beeCount} Bees`;
+                
+                if (this.beeCount <= 0) {
+                    document.getElementById('honeyPot').classList.add('visible');
+                }
+            },
+
+            handleClick(row, col) {
+                if (this.isProcessing) return;
+                
+                if (!this.selected) {
+                    this.selected = { row, col };
+                    document.querySelector(`[data-row="${row}"][data-col="${col}"]`).classList.add('selected');
+                    this.playSound('match');
+                } else {
+                    const prev = document.querySelector('.selected');
+                    if (prev) prev.classList.remove('selected');
+                    
+                    if (this.areAdjacent(this.selected, { row, col })) {
+                        this.swap(this.selected, { row, col });
+                    }
+                    this.selected = null;
+                }
+            },
+
+            areAdjacent(pos1, pos2) {
+                const rowDiff = Math.abs(pos1.row - pos2.row);
+                const colDiff = Math.abs(pos1.col - pos2.col);
+                return (rowDiff === 1 && colDiff === 0) || (rowDiff === 0 && colDiff === 1);
+            },
+
+            exchange(a, b) {
+                const g = this.grid, p = this.powerupTypes;
+                [g[a.row][a.col], g[b.row][b.col]] = [g[b.row][b.col], g[a.row][a.col]];
+                [p[a.row][a.col], p[b.row][b.col]] = [p[b.row][b.col], p[a.row][a.col]];
+            },
+
+            async swap(a, b) {
+                this.isProcessing = true;
+                const sa = this.powerupTypes[a.row][a.col], sb = this.powerupTypes[b.row][b.col];
+                this.exchange(a, b);
+                this.render();
+                const m = this.detectSpawns([a, b]);
+                const combo = (sa || sb) ? this.comboCells(sa, sb, a, b) : null;
+                if (combo || m.cells.size >= 3) {
+                    this.moves--;
+                    await this.processMatches([...new Set([...m.cells, ...(combo || [])])], combo ? [] : m.spawns);
+                } else {
+                    await new Promise(r => setTimeout(r, 100));
+                    this.exchange(a, b);
+                    this.render();
+                }
+                this.isProcessing = false;
+                if (this.beeCount > 0 && !this.findMove()) {
+                    this.createGrid(); this.render();
+                    this.showMessage('🔀 No moves left - reshuffled!', 'info');
+                }
+                this.checkGameState();
+            },
+
+            findMatches(row, col) {
+                const type = this.grid[row][col];
+                const matches = new Set();
+                
+                // Horizontal
+                let left = col;
+                while (left > 0 && this.grid[row][left - 1] === type) left--;
+                let right = col;
+                while (right < this.gridSize.cols - 1 && this.grid[row][right + 1] === type) right++;
+                
+                if (right - left + 1 >= 3) {
+                    for (let c = left; c <= right; c++) {
+                        matches.add(`${row},${c}`);
+                    }
+                }
+                
+                // Vertical
+                let top = row;
+                while (top > 0 && this.grid[top - 1][col] === type) top--;
+                let bottom = row;
+                while (bottom < this.gridSize.rows - 1 && this.grid[bottom + 1][col] === type) bottom++;
+                
+                if (bottom - top + 1 >= 3) {
+                    for (let r = top; r <= bottom; r++) {
+                        matches.add(`${r},${col}`);
+                    }
+                }
+                
+                return Array.from(matches);
+            },
+
+            findSquareMatches(row, col) {
+                const type = this.grid[row][col];
+                const matches = [];
+                
+                // Check 2x2 square with this cell as top-left
+                if (row < this.gridSize.rows - 1 && col < this.gridSize.cols - 1) {
+                    if (this.grid[row][col] === type &&
+                        this.grid[row][col + 1] === type &&
+                        this.grid[row + 1][col] === type &&
+                        this.grid[row + 1][col + 1] === type) {
+                        matches.push(`${row},${col}`);
+                        matches.push(`${row},${col + 1}`);
+                        matches.push(`${row + 1},${col}`);
+                        matches.push(`${row + 1},${col + 1}`);
+                    }
+                }
+                
+                // Check 2x2 square with this cell as top-right
+                if (row < this.gridSize.rows - 1 && col > 0) {
+                    if (this.grid[row][col] === type &&
+                        this.grid[row][col - 1] === type &&
+                        this.grid[row + 1][col] === type &&
+                        this.grid[row + 1][col - 1] === type) {
+                        matches.push(`${row},${col}`);
+                        matches.push(`${row},${col - 1}`);
+                        matches.push(`${row + 1},${col}`);
+                        matches.push(`${row + 1},${col - 1}`);
+                    }
+                }
+                
+                // Check 2x2 square with this cell as bottom-left
+                if (row > 0 && col < this.gridSize.cols - 1) {
+                    if (this.grid[row][col] === type &&
+                        this.grid[row][col + 1] === type &&
+                        this.grid[row - 1][col] === type &&
+                        this.grid[row - 1][col + 1] === type) {
+                        matches.push(`${row},${col}`);
+                        matches.push(`${row},${col + 1}`);
+                        matches.push(`${row - 1},${col}`);
+                        matches.push(`${row - 1},${col + 1}`);
+                    }
+                }
+                
+                // Check 2x2 square with this cell as bottom-right
+                if (row > 0 && col > 0) {
+                    if (this.grid[row][col] === type &&
+                        this.grid[row][col - 1] === type &&
+                        this.grid[row - 1][col] === type &&
+                        this.grid[row - 1][col - 1] === type) {
+                        matches.push(`${row},${col}`);
+                        matches.push(`${row},${col - 1}`);
+                        matches.push(`${row - 1},${col}`);
+                        matches.push(`${row - 1},${col - 1}`);
+                    }
+                }
+                
+                return matches;
+            },
+
+            getAllMatches() {
+                const allMatches = new Set();
+                
+                // Check for line matches (3+ in a row/column)
+                for (let row = 0; row < this.gridSize.rows; row++) {
+                    for (let col = 0; col < this.gridSize.cols; col++) {
+                        const matches = this.findMatches(row, col);
+                        matches.forEach(m => allMatches.add(m));
+                    }
+                }
+                
+                // Check for 2x2 square matches
+                for (let row = 0; row < this.gridSize.rows; row++) {
+                    for (let col = 0; col < this.gridSize.cols; col++) {
+                        const squareMatches = this.findSquareMatches(row, col);
+                        if (squareMatches.length === 4) {
+                            squareMatches.forEach(m => allMatches.add(m));
+                        }
+                    }
+                }
+                
+                return Array.from(allMatches);
+            },
+
+            async processMatches(cells, spawns = [], depth = 1) {
+                const set = this.expand(new Set(cells));
+                spawns.forEach(sp => set.delete(sp.r + ',' + sp.c));
+                const n = set.size;
+                this.score += n * 10 * depth;
+                this.playSound(spawns.length || n > 6 ? 'powerup' : 'match');
+                this.removeBees(Math.min(n * 3, this.beeCount));
+                set.forEach(k => {
+                    const [r, c] = k.split(',').map(Number);
+                    const el = document.querySelector(`[data-row="${r}"][data-col="${c}"]`);
+                    if (el) el.classList.add('matching');
+                });
+                await new Promise(r => setTimeout(r, 120));
+                set.forEach(k => {
+                    const [r, c] = k.split(',').map(Number);
+                    this.grid[r][c] = null; this.powerupTypes[r][c] = null;
+                });
+                spawns.forEach(sp => {
+                    this.powerupTypes[sp.r][sp.c] = sp.kind;
+                    if (sp.kind === 'colorbomb') this.grid[sp.r][sp.c] = '🌈';
+                });
+                await this.applyGravity();
+                const m = this.detectSpawns();
+                if (m.cells.size >= 3) await this.processMatches([...m.cells], m.spawns, depth + 1);
+            },
+
+            removeBees(count) {
+                const box = document.getElementById('beeContainer');
+                const live = box.querySelectorAll('.bee:not(.removing)');
+                this.beeCount = Math.max(0, this.beeCount - count);
+                const keep = Math.ceil(this.beeCount / this.maxBees * this.domBees);
+                for (let i = 0; i < live.length - keep; i++) { live[i].style.animationDelay = (i % 10) * 20 + 'ms'; live[i].classList.add('removing'); }
+                setTimeout(() => box.querySelectorAll('.removing').forEach(b => b.remove()), 500);
+                this.updateProgress();
+            },
+
+            async applyGravity() {
+                const R = this.gridSize.rows, C = this.gridSize.cols;
+                this.drops = {};
+                for (let c = 0; c < C; c++) {
+                    const keep = [];
+                    for (let r = R - 1; r >= 0; r--)
+                        if (this.grid[r][c] !== null) keep.push({ t: this.grid[r][c], p: this.powerupTypes[r][c], from: r });
+                    const missing = R - keep.length;
+                    for (let i = 0; i < R; i++) {
+                        const r = R - 1 - i;
+                        if (i < keep.length) {
+                            this.grid[r][c] = keep[i].t; this.powerupTypes[r][c] = keep[i].p;
+                            if (keep[i].from !== r) this.drops[r + ',' + c] = r - keep[i].from;
+                        } else {
+                            this.grid[r][c] = this.randomType(); this.powerupTypes[r][c] = null;
+                            this.drops[r + ',' + c] = missing;
+                        }
+                    }
+                }
+                this.render();
+                this.drops = null;
+                await new Promise(r => setTimeout(r, 220));
+            },
+
+            detectSpawns(pref = []) {
+                const R = this.gridSize.rows, C = this.gridSize.cols, g = this.grid, B = '🌈';
+                const runs = [], cells = new Set(), spawns = [], used = new Set();
+                const scan = (n, m, at, d) => {
+                    for (let i = 0; i < n; i++) for (let j = 0; j < m;) {
+                        const t = at(i, j); let e = j;
+                        while (e + 1 < m && t !== B && at(i, e + 1) === t) e++;
+                        if (e - j >= 2) {
+                            const cs = [];
+                            for (let k = j; k <= e; k++) cs.push(d === 'h' ? [i, k] : [k, i]);
+                            runs.push({ d, cs }); cs.forEach(x => cells.add(x + ''));
+                        }
+                        j = e + 1;
+                    }
+                };
+                scan(R, C, (i, j) => g[i][j], 'h');
+                scan(C, R, (i, j) => g[j][i], 'v');
+                const pick = cs => cs.find(([r, c]) => pref.some(q => q.row === r && q.col === c)) || cs[cs.length >> 1];
+                const free = cs => !cs.some(x => used.has(x + ''));
+                const take = (cs, kind, at) => { cs.forEach(x => used.add(x + '')); spawns.push({ r: at[0], c: at[1], kind }); };
+                runs.filter(x => x.cs.length >= 5).forEach(x => take(x.cs, 'colorbomb', pick(x.cs)));
+                runs.forEach(h => { if (h.d === 'h') runs.forEach(v => {
+                    if (v.d !== 'v' || !free(h.cs) || !free(v.cs)) return;
+                    const x = h.cs.find(a => v.cs.some(b => a + '' === b + ''));
+                    if (x) take([...h.cs, ...v.cs], 'wrapped', x);
+                }); });
+                runs.filter(x => x.cs.length === 4 && free(x.cs)).forEach(x => take(x.cs, x.d === 'h' ? 'striped-v' : 'striped-h', pick(x.cs)));
+                for (let r = 0; r < R - 1; r++) for (let c = 0; c < C - 1; c++) {
+                    const t = g[r][c];
+                    if (t !== B && g[r][c + 1] === t && g[r + 1][c] === t && g[r + 1][c + 1] === t) {
+                        const cs = [[r, c], [r, c + 1], [r + 1, c], [r + 1, c + 1]];
+                        cs.forEach(x => cells.add(x + ''));
+                        if (free(cs)) take(cs, 'bee', pick(cs));
+                    }
+                }
+                return { cells, spawns };
+            },
+
+            area(r, c, k) {
+                const out = [];
+                for (let i = Math.max(0, r - k); i <= Math.min(this.gridSize.rows - 1, r + k); i++)
+                    for (let j = Math.max(0, c - k); j <= Math.min(this.gridSize.cols - 1, c + k); j++) out.push(i + ',' + j);
+                return out;
+            },
+
+            randomCells(n, ex) {
+                const l = [];
+                for (let r = 0; r < this.gridSize.rows; r++) for (let c = 0; c < this.gridSize.cols; c++)
+                    if (!ex.has(r + ',' + c)) l.push(r + ',' + c);
+                return l.sort(() => Math.random() - 0.5).slice(0, n);
+            },
+
+            expand(set) {
+                const R = this.gridSize.rows, C = this.gridSize.cols, queue = [...set], done = new Set();
+                while (queue.length) {
+                    const k = queue.pop();
+                    if (done.has(k)) continue;
+                    done.add(k);
+                    const [r, c] = k.split(',').map(Number), p = this.powerupTypes[r][c];
+                    if (!p) continue;
+                    let add = [];
+                    if (p === 'striped-h') for (let j = 0; j < C; j++) add.push(r + ',' + j);
+                    else if (p === 'striped-v') for (let i = 0; i < R; i++) add.push(i + ',' + c);
+                    else if (p === 'wrapped') add = this.area(r, c, 1);
+                    else if (p === 'bee') add = this.randomCells(3, set);
+                    else if (p === 'colorbomb') {
+                        const t = this.types[Math.floor(Math.random() * this.types.length)];
+                        for (let i = 0; i < R; i++) for (let j = 0; j < C; j++) if (this.grid[i][j] === t) add.push(i + ',' + j);
+                    }
+                    add.forEach(x => { if (!set.has(x)) { set.add(x); queue.push(x); } });
+                }
+                return set;
+            },
+
+            comboCells(sa, sb, a, b) {
+                const R = this.gridSize.rows, C = this.gridSize.cols, g = this.grid, p = this.powerupTypes;
+                const K = s => !s ? null : s.startsWith('striped') ? 's' : s[0];
+                const x = K(sa), y = K(sb), set = new Set(), key = (r, c) => r + ',' + c;
+                if (sa) set.add(key(b.row, b.col));
+                if (sb) set.add(key(a.row, a.col));
+                const all = f => { for (let r = 0; r < R; r++) for (let c = 0; c < C; c++) if (f(r, c)) set.add(key(r, c)); };
+                const conv = (k, o) => {
+                    const [r, c] = k.split(',').map(Number);
+                    p[r][c] = o === 's' ? (Math.random() < 0.5 ? 'striped-h' : 'striped-v') : 'wrapped';
+                    set.add(k);
+                };
+                if (x === 'c' || y === 'c') {
+                    const o = x === 'c' ? y : x, col = x === 'c' ? g[a.row][a.col] : g[b.row][b.col];
+                    if (o === 'c') all(() => true);
+                    else if (o === 'b') this.randomCells(8, set).forEach(k => set.add(k));
+                    else {
+                        all((r, c) => g[r][c] === col);
+                        if (o) [...set].forEach(k => { const [r, c] = k.split(',').map(Number); if (g[r][c] === col) conv(k, o); });
+                    }
+                } else if ((x === 's' && y === 'w') || (x === 'w' && y === 's')) {
+                    all((r, c) => Math.abs(r - b.row) <= 1 || Math.abs(c - b.col) <= 1);
+                } else if (x === 'w' && y === 'w') this.area(b.row, b.col, 2).forEach(k => set.add(k));
+                else if (x === 's' && y === 's') all((r, c) => r === b.row || c === b.col);
+                else if (x === 'b' && y === 'b') this.randomCells(6, set).forEach(k => set.add(k));
+                else if (x && y && (x === 'b' || y === 'b')) {
+                    const o = x === 'b' ? y : x;
+                    this.randomCells(3, set).forEach(k => conv(k, o));
+                }
+                return set;
+            },
+
+            findMove() {
+                const R = this.gridSize.rows, C = this.gridSize.cols;
+                for (let r = 0; r < R; r++) for (let c = 0; c < C; c++) for (const [dr, dc] of [[0, 1], [1, 0]]) {
+                    const a = { row: r, col: c }, b = { row: r + dr, col: c + dc };
+                    if (b.row >= R || b.col >= C) continue;
+                    if (this.powerupTypes[r][c] || this.powerupTypes[b.row][b.col]) return [a, b];
+                    this.exchange(a, b);
+                    const ok = this.detectSpawns().cells.size >= 3;
+                    this.exchange(a, b);
+                    if (ok) return [a, b];
+                }
+                return null;
+            },
+
+            showHint() {
+                if (this.isProcessing) return;
+                const m = this.findMove();
+                if (!m) return;
+                m.forEach(q => {
+                    const el = document.querySelector(`[data-row="${q.row}"][data-col="${q.col}"]`);
+                    el.classList.add('selected');
+                    setTimeout(() => el.classList.remove('selected'), 1500);
+                });
+            },
+
+            updateFree() {
+                document.getElementById('freeCount').textContent = this.free;
+                document.getElementById('freeTray').classList.toggle('has', this.free > 0);
+            },
+
+            disarm() { this.armed = false; document.getElementById('freeTray').classList.remove('armed'); },
+
+            bindFree() {
+                const tray = document.getElementById('freeTray');
+                tray.addEventListener('pointerdown', () => {
+                    if (this.free > 0 && !this.isProcessing) { this.armed = true; tray.classList.add('armed'); }
+                });
+                document.addEventListener('pointerup', e => {
+                    if (!this.armed) return;
+                    const el = document.elementFromPoint(e.clientX, e.clientY);
+                    const cell = el && el.closest('.cell');
+                    if (cell) this.useFree(+cell.dataset.row, +cell.dataset.col);
+                    else if (!(el && el.closest('#freeTray'))) this.disarm();
+                });
+            },
+
+            async useFree(r, c) {
+                if (this.isProcessing || this.free < 1) return;
+                this.disarm();
+                this.free--;
+                this.updateFree();
+                this.isProcessing = true;
+                this.playSound('powerup');
+                await this.processMatches(this.area(r, c, 1));
+                this.isProcessing = false;
+                this.checkGameState();
+            },
+
+            checkGameState() {
+                if (this.ended) return;
+                if (this.beeCount <= 0 || this.moves <= 0) this.ended = true;
+                if (this.beeCount <= 0) {
+                    this.playSound('levelup');
+                    this.showLevelComplete();
+                } else if (this.moves <= 0) {
+                    this.showMessage('😔 No more moves!', 'info');
+                    setTimeout(() => this.retryLevel(), 1500);
+                }
+            },
+
+            showLevelComplete() {
+                this.createConfetti();
+                
+                // Check for milestone rewards
+                let code = '';
+                let reward = '';
+                
+                if (this.level === 5 && !this.unlockedCodes.includes('23305')) {
+                    code = '23305';
+                    reward = '5% DISCOUNT';
+                    this.unlockedCodes.push(code);
+                } else if (this.level === 10 && !this.unlockedCodes.includes('23310')) {
+                    code = '23310';
+                    reward = '10% DISCOUNT';
+                    this.unlockedCodes.push(code);
+                } else if (this.level === 20 && !this.unlockedCodes.includes('23320')) {
+                    code = '23320';
+                    reward = '20% DISCOUNT';
+                    this.unlockedCodes.push(code);
+                } else if (this.level === 50 && !this.unlockedCodes.includes('EXCL.GH.PR')) {
+                    code = 'EXCL.GH.PR';
+                    reward = 'FREE HONEY PRODUCT';
+                    this.unlockedCodes.push(code);
+                }
+                
+                if (code) {
+                    this.showRewardCode(code, reward);
+                } else {
+                    this.showMessage('🎉 Level Complete!', 'success');
+                    setTimeout(() => this.nextLevel(), 2000);
+                }
+            },
+
+            showRewardCode(code, reward) {
+                const overlay = document.createElement('div');
+                overlay.style.cssText = `position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);display:flex;justify-content:center;align-items:center;z-index:2000;`;
+                
+                const popup = document.createElement('div');
+                popup.style.cssText = `background:linear-gradient(135deg,#FFD700,#FFA500);border-radius:30px;padding:40px;max-width:90%;width:400px;border:5px solid white;text-align:center;`;
+                
+                popup.innerHTML = `
+                    <div style="font-size:60px;margin-bottom:15px;">🎁🍯</div>
+                    <h2 style="color:#8B4513;font-size:32px;margin-bottom:15px;">Reward unlocked!</h2>
+                    <div style="background:white;border-radius:20px;padding:25px;margin-bottom:20px;">
+                        <div style="color:#A8740A;font-size:28px;font-weight:bold;margin-bottom:10px;">${reward}</div>
+                        <div style="color:#666;font-size:14px;margin-bottom:15px;">Exclusive Ghanaian Honey</div>
+                        <div style="background:#FFD700;padding:15px;border-radius:15px;font-size:28px;font-weight:bold;color:#8B4513;letter-spacing:2px;font-family:monospace;">${code}</div>
+                        <div style="color:#4A2C06;font-size:15px;line-height:1.45;margin-top:14px;">${code === '23305' ? '📸 Send a screenshot of this code to <b>@beehappy_hive</b> on Instagram, TikTok or Facebook to redeem your 5% discount on a Bee Happy Honey purchase.' : '📸 Screenshot or write this code down!'}</div>
+                    </div>
+                    <button onclick="this.parentElement.parentElement.remove();game.nextLevel();" style="background:linear-gradient(135deg,#FF6B6B,#C44569);color:white;border:none;padding:15px 40px;border-radius:25px;font-size:18px;font-weight:bold;cursor:pointer;">
+                        AWESOME! 🎉
+                    </button>
+                `;
+                
+                overlay.appendChild(popup);
+                document.body.appendChild(overlay);
+            },
+
+            nextLevel() {
+                this.level++;
+                this.free++;
+                this.updateFree();
+                this.startLevel();
+            },
+
+            retryLevel() { this.startLevel(); },
+
+            startLevel() {
+                this.ended = false;
+                this.moves = 25 + Math.floor((this.level - 1) / 5) * 5;
+                this.beeCount = Math.min(100 * this.level, 2000);
+                this.maxBees = this.beeCount;
+                this.createGrid();
+                this.createBees();
+                this.render();
+            },
+
+            reset() {
+                this.ended = false; this.free = 0; this.updateFree();
+                this.level = 1;
+                this.moves = 25;
+                this.score = 0;
+                this.beeCount = 100;
+                this.maxBees = 100;
+                this.createGrid();
+                this.createBees();
+                this.render();
+            },
+
+            createConfetti() {
+                const overlay = document.getElementById('celebrationOverlay');
+                overlay.classList.add('active');
+                
+                const items = ['🎉', '🎊', '⭐', '✨', '💫', '🍯', '🐝'];
+                for (let i = 0; i < 30; i++) {
+                    setTimeout(() => {
+                        const confetti = document.createElement('div');
+                        confetti.className = 'confetti';
+                        confetti.textContent = items[Math.floor(Math.random() * items.length)];
+                        confetti.style.left = Math.random() * 100 + '%';
+                        overlay.appendChild(confetti);
+                        setTimeout(() => confetti.remove(), 3000);
+                    }, i * 30);
+                }
+                
+                setTimeout(() => overlay.classList.remove('active'), 3000);
+            },
+
+            showMessage(text, type) {
+                const msg = document.getElementById('message');
+                msg.innerHTML = text;
+                msg.className = `message ${type} show`;
+                setTimeout(() => msg.classList.remove('show'), 1500);
+            }
+        };
+
+        game.init();
+    </script>
+</body>
+</html>
